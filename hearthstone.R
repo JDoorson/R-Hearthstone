@@ -2,16 +2,18 @@
 #install.packages("httr", "jsonlite")
 
 # Load 'em
-#library("httr")
-#library("jsonlite")
+library("httr")
+library("jsonlite")
 
 # Define API vars
 url <- "https://omgvamp-hearthstone-v1.p.mashape.com"
 endpoint <- "cards"
-apiKey <- "iCAx0o0i7ymshgPvezHg9zZqQO1Ip1cbh6HjsnxdA15stjTONr"
+
+# Load config
+source("D:/R/Hearthstone/config.R")
 
 # Make the request
-raw.result <- GET(url = url, path = endpoint, add_headers("X-Mashape-Key" = apiKey))
+raw.result <- GET(url = url, path = endpoint, add_headers("X-Mashape-Key" = mashape.api.key.testing))
 
 # Parse it
 char.content <- rawToChar(raw.result$content)   # Retrieve the Unicode result and parse it to chars
@@ -32,3 +34,4 @@ card.texts$text[is.na(card.texts$text)] <- ""
 
 # Order the data
 ordered <- card.texts[order(nchar(card.texts$text), decreasing = TRUE), ]
+ordered[1:10, ]
