@@ -25,12 +25,22 @@ content <- content[1:16]
 content <- content[-3]
 
 # Get a subset of all data frames in the list, containing just the cardId and the card text
-text.data.list <- lapply(content, subset, select=c("cardId", "text"))
+text.data.list <- lapply(content, subset, select=c("cardId", "text", "collectible"))
 card.texts <- do.call(rbind, text.data.list)
 # In this scenario, it makes more sense to replace all NA text values with empty strings
 card.texts$text[is.na(card.texts$text)] <- ""
+# Make sure the collectible flag is a logical value in all records
+card.texts$collectible[is.na(card.texts$collectible)] <- FALSE
 
-# TODO: Filter the HTML and other 'invalid' characters from the text
+# Define a function to filter the text
+# TODO: Too specific, use the pipeline (%>%) thingy instead?
+cleanText <- function(text) {
+  text <- gsub("<.*?>", "", text)
+  return(text)
+}
+
+# Filter out unwanted (HTML) characters
+card.texts$text <- lapply(card.texts$text, cleanText)
 
 # Order the data
 ordered <- card.texts[order(nchar(card.texts$text), decreasing = TRUE), ]
